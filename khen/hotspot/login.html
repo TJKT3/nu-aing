@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>KHIRAN</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    background: black;
+    overflow: hidden;
+    color: #00ff00;
+    font-family: 'Share Tech Mono', monospace;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 2;
+}
+
+h1 {
+    letter-spacing: 4px;
+    text-shadow: 0 0 10px #00ff00;
+}
+
+input {
+    display: block;
+    margin: 15px auto;
+    padding: 10px;
+    width: 260px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #00ff00;
+    color: #00ff00;
+    text-align: center;
+    outline: none;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 30px;
+    background: transparent;
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #00ff00;
+    color: black;
+}
+</style>
+</head>
+
+<body>
+
+<!-- MATRIX -->
+<canvas id="matrix"></canvas>
+
+<!-- CHAP SUPPORT -->
+$(if chap-id)
+<form name="sendin" action="$(link-login-only)" method="post" style="display:none">
+    <input type="hidden" name="username" />
+    <input type="hidden" name="password" />
+    <input type="hidden" name="dst" value="$(link-orig)" />
+    <input type="hidden" name="popup" value="true" />
+</form>
+
+<script src="/md5.js"></script>
+<script>
+function doLogin() {
+    document.sendin.username.value = document.login.username.value;
+    document.sendin.password.value =
+        hexMD5('$(chap-id)' + document.login.password.value + '$(chap-challenge)');
+    document.sendin.submit();
+    return false;
+}
+</script>
+
+
+<!-- UI -->
+<div class="container">
+    <h1>KHIRAN</h1>
+
+    <div style="color:red;"></div>
+
+    <form name="login" action="$(link-login-only)" method="post"
+          $(if chap-id) onSubmit="return doLogin()" $(endif)>
+
+        <input type="hidden" name="dst" value="$(link-orig)">
+        <input type="hidden" name="popup" value="true">
+
+        <input name="username" type="text" placeholder="USERNAME" value="$(username)" required>
+        <input name="password" type="password" placeholder="PASSWORD" required>
+
+        <button type="submit">ENTER</button>
+    </form>
+</div>
+
+<!-- MATRIX SCRIPT -->
+<script>
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+
+const chars = "0123456789";
+const fontSize = 14;
+const columns = canvas.width / fontSize;
+
+const drops = [];
+
+for (let x = 0; x < columns; x++) drops[x] = 1;
+
+function draw() {
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#00ff00";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+            drops[i] = 0;
+
+        drops[i]++;
+    }
+}
+
+setInterval(draw, 33);
+</script>
+
+</body>
+</html>
